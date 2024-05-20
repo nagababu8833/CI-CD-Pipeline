@@ -1,0 +1,18 @@
+---
+hosts: test-servers
+  sudo : yes
+  vars :
+   -server_port: 8080
+
+  tasks:
+   -name: install nginx
+    yum : pkg=nginx state=installed
+   
+   -name: server nginx configuration
+    template: src=../file/flask.conf dest=/etc/nginx/conf.d/
+    notify:
+     -restart nginx
+ 
+  handlers:
+     -name : restart nginx
+      service : name:nginx state=restarted
