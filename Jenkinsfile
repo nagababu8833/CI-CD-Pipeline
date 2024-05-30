@@ -7,14 +7,14 @@ pipeline {
             }
         }
     }
-    stages {
+
         stage ('Test stage'){
             steps{
                 sh 'mvn test'
             }
-        }
+        
     }
-    stages{
+   
         when{
             branch 'master'
         }
@@ -22,7 +22,7 @@ pipeline {
             steps{
                 sh 'mvn depoly'
             }
-        }
+        
     }
     post{
         always {
@@ -33,6 +33,6 @@ pipeline {
         }
         failure {
             echo 'pipeline is failure'
-        }
+        
     }
 }
