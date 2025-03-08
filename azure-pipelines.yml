@@ -1,0 +1,31 @@
+trigger:
+  - main  # Runs pipeline on code changes in main branch
+
+pool:
+  vmImage: 'ubuntu-latest'  # Uses a Microsoft-hosted Ubuntu VM
+
+steps:
+  - task: UseDotNet@2
+    displayName: 'Install .NET SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '6.x'
+
+  - script: dotnet build --configuration Release
+    displayName: 'Build Application'
+
+  - script: dotnet publish -c Release -o $(Build.ArtifactStagingDirectory)
+    displayName: 'Publish Application'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'drop'
+
+  - task: AzureWebApp@1
+    displayName: 'Deploy to Azure App Service'
+    inputs:
+      azureSubscription: '<Azure Service Connection>'
+      appName: '<YourAppServiceName>'
+      package: '$(Build.ArtifactStagingDirectory)'
